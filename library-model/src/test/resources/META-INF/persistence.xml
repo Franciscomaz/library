@@ -6,6 +6,7 @@
     <persistence-unit transaction-type="RESOURCE_LOCAL" name="libraryPU">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>com.library.app.category.model.Category</class>
+        <class>com.library.app.author.model.Author</class>
         <properties>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
