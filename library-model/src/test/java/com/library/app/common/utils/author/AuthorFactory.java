@@ -15,4 +15,8 @@ public class AuthorFactory {
     public static Author createUncleBob() {
         return new Author("Uncle Bob");
     }
+
+    public static Author createErichGamma() {
+        return new Author("Erich Gamma");
+    }
 }

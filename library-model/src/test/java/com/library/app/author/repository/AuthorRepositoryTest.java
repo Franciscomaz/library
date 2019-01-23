@@ -1,6 +1,9 @@
 package com.library.app.author.repository;
 
 import com.library.app.author.model.Author;
+import com.library.app.author.model.AuthorFilter;
+import com.library.app.common.model.PaginatedData;
+import com.library.app.common.model.filter.PaginationData;
 import com.library.app.common.utils.author.AuthorFactory;
 import com.library.app.common.utils.db.DBCommandTransactionalExecutor;
 import org.junit.After;
@@ -90,5 +93,51 @@ public class AuthorRepositoryTest {
     public void existsById() {
         final Long addedAuthorId = dbCommandTransactionalExecutor.execute(() -> authorRepository.add(AuthorFactory.createMartinFowler()).getId());
         Assert.assertThat(authorRepository.existsBy(addedAuthorId), is(true));
+    }
+
+    @Test
+    public void shouldGetAuthorSortedByName() {
+        loadDataForFindByFilter();
+
+        final PaginatedData<Author> result = authorRepository.findByFilter(new AuthorFilter());
+        Assert.assertThat(result.getNumberOfRows(), is(4));
+        Assert.assertThat(result.getRows().size(), is(4));
+        Assert.assertThat(result.getRows().get(0).getName(), is(AuthorFactory.createErichGamma().getName()));
+        Assert.assertThat(result.getRows().get(1).getName(), is(AuthorFactory.createMartinFowler().getName()));
+        Assert.assertThat(result.getRows().get(2).getName(), is(AuthorFactory.createRobertMartin().getName()));
+        Assert.assertThat(result.getRows().get(3).getName(), is(AuthorFactory.createUncleBob().getName()));
+    }
+
+    @Test
+    public void shouldGetAuthorPaginated() {
+        loadDataForFindByFilter();
+
+        final AuthorFilter authorFilter = new AuthorFilter();
+        authorFilter.setName("o");
+        authorFilter.setPaginationData(new PaginationData(0, 2, "name", PaginationData.OrderMode.DESCENDING));
+
+        PaginatedData<Author> result = authorRepository.findByFilter(authorFilter);
+        Assert.assertThat(result.getNumberOfRows(), is(3));
+        Assert.assertThat(result.getRows().size(), is(2));
+        Assert.assertThat(result.getRows().get(0).getName(), is(AuthorFactory.createUncleBob().getName()));
+        Assert.assertThat(result.getRows().get(1).getName(), is(AuthorFactory.createRobertMartin().getName()));
+
+        authorFilter.setPaginationData(new PaginationData(2, 2, "name", PaginationData.OrderMode.DESCENDING));
+
+        result = authorRepository.findByFilter(authorFilter);
+        Assert.assertThat(result.getNumberOfRows(), is(3));
+        Assert.assertThat(result.getRows().size(), is(1));
+        Assert.assertThat(result.getRows().get(0).getName(), is(AuthorFactory.createMartinFowler().getName()));
+    }
+
+    private void loadDataForFindByFilter() {
+        dbCommandTransactionalExecutor.execute(() -> {
+            authorRepository.add(AuthorFactory.createMartinFowler());
+            authorRepository.add(AuthorFactory.createRobertMartin());
+            authorRepository.add(AuthorFactory.createUncleBob());
+            authorRepository.add(AuthorFactory.createErichGamma());
+
+            return null;
+        });
     }
 }

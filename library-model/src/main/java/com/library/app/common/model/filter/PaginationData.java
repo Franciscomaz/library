@@ -8,10 +8,11 @@ public class PaginationData {
     private final String orderField;
     private final OrderMode orderMode;
 
-    public enum OrderMode {
-        ASCENDING, DESCENDING
-    }
 
+
+    public enum OrderMode {
+        ASCENDING, DESCENDING;
+    }
     public PaginationData(int firstResult, int maxResults, String orderField, OrderMode orderMode) {
         this.firstResult = firstResult;
         this.maxResults = maxResults;
@@ -37,5 +38,9 @@ public class PaginationData {
 
     public boolean hasOrderField() {
         return Objects.nonNull(getOrderField());
+    }
+
+    public boolean isAscending() {
+        return orderMode.equals(OrderMode.ASCENDING);
     }
 }
