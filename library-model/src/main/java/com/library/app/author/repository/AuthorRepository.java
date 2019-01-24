@@ -3,6 +3,7 @@ package com.library.app.author.repository;
 import com.library.app.author.model.Author;
 import com.library.app.author.model.AuthorFilter;
 import com.library.app.common.model.PaginatedData;
+import com.library.app.common.repository.GenericRepository;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -13,42 +14,26 @@ import java.util.List;
 import java.util.Map;
 
 @Stateless
-public class AuthorRepository {
+public class AuthorRepository extends GenericRepository<Author> {
 
     @PersistenceContext
-    EntityManager entityManager;
+    public EntityManager entityManager;
 
-
-    public Author add(final Author author) {
-        entityManager.persist(author);
-        return author;
+    @Override
+    protected Class<Author> getPersistentClass() {
+        return Author.class;
     }
 
-    public Author findBy(final Long id) {
-        return entityManager.find(Author.class, id);
-    }
-
-    public Author update(final Author author) {
-        return entityManager.merge(author);
-    }
-
-    public void delete(final Author author) {
-        entityManager.remove(author);
-    }
-
-    public boolean existsBy(final Long id) {
-        return entityManager.createQuery("select 1 from Author author where author.id = :id")
-                .setParameter("id", id)
-                .setMaxResults(1)
-                .getResultList()
-                .size() > 0;
+    @Override
+    protected EntityManager getEntityManager() {
+        return entityManager;
     }
 
     @SuppressWarnings("unchecked")
     public PaginatedData<Author> findByFilter(final AuthorFilter filter) {
         StringBuilder clause = new StringBuilder("WHERE e.id is not null");
         Map<String, Object> queryParameters = new HashMap<>();
-        if(filter.getName() != null) {
+        if (filter.getName() != null) {
             clause.append(" And UPPER(e.name) Like UPPER(:name)");
             queryParameters.put("name", "%" + filter.getName() + "%");
         }
@@ -63,7 +48,7 @@ public class AuthorRepository {
 
         Query queryAuthor = entityManager.createQuery("select e From Author e " + clause.toString() + " " + clauseSort.toString());
         applyQueryParametersQuery(queryParameters, queryAuthor);
-        if(filter.hasPaginationData()) {
+        if (filter.hasPaginationData()) {
             queryAuthor.setFirstResult(filter.getPaginationData().getFirstResult());
             queryAuthor.setMaxResults(filter.getPaginationData().getMaxResults());
         }

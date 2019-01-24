@@ -3,6 +3,7 @@ package com.library.app.category.repository;
 import com.library.app.category.model.Category;
 import com.library.app.common.utils.category.CategoryFactory;
 import com.library.app.common.utils.db.DBCommandTransactionalExecutor;
+import com.library.app.common.utils.db.TestBaseRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,27 +17,20 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class CategoryRepositoryTest {
-    private EntityManagerFactory entityManagerFactory;
-    private EntityManager entityManager;
+public class CategoryRepositoryTest extends TestBaseRepository {
     private CategoryRepository categoryRepository;
-    private DBCommandTransactionalExecutor dbCommandTransactionalExecutor;
 
     @Before
-    public void initTestCase() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("libraryPU");
-        entityManager = entityManagerFactory.createEntityManager();
-
-        dbCommandTransactionalExecutor = new DBCommandTransactionalExecutor(entityManager);
+    public void setUp() {
+        initTestCase();
 
         categoryRepository = new CategoryRepository();
         categoryRepository.entityManager = entityManager;
     }
 
     @After
-    public void closeEntityManager() {
-        entityManager.close();
-        entityManagerFactory.close();
+    public void setDown() {
+        closeEntityManager();
     }
 
     @Test
@@ -57,7 +51,7 @@ public class CategoryRepositoryTest {
 
     @Test
     public void shouldReturnNull() {
-        assertNull(categoryRepository.findBy(1));
+        assertNull(categoryRepository.findBy(1L));
     }
 
     @Test

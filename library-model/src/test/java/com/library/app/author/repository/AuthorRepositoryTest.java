@@ -5,40 +5,28 @@ import com.library.app.author.model.AuthorFilter;
 import com.library.app.common.model.PaginatedData;
 import com.library.app.common.model.filter.PaginationData;
 import com.library.app.common.utils.author.AuthorFactory;
-import com.library.app.common.utils.db.DBCommandTransactionalExecutor;
+import com.library.app.common.utils.db.TestBaseRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Matchers.isNotNull;
 
-public class AuthorRepositoryTest {
-    private EntityManagerFactory entityManagerFactory;
-    private EntityManager entityManager;
+public class AuthorRepositoryTest extends TestBaseRepository {
     private AuthorRepository authorRepository;
-    private DBCommandTransactionalExecutor dbCommandTransactionalExecutor;
 
     @Before
-    public void initTestCase() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("libraryPU");
-        entityManager = entityManagerFactory.createEntityManager();
-
-        dbCommandTransactionalExecutor = new DBCommandTransactionalExecutor(entityManager);
+    public void setUp() {
+        initTestCase();
 
         authorRepository = new AuthorRepository();
         authorRepository.entityManager = entityManager;
     }
 
     @After
-    public void closeEntityManager() {
-        entityManager.close();
-        entityManagerFactory.close();
+    public void setDown() {
+        closeEntityManager();
     }
 
     @Test
@@ -83,7 +71,7 @@ public class AuthorRepositoryTest {
         Assert.assertThat(addedAuthor, is(notNullValue()));
 
         dbCommandTransactionalExecutor.execute(() -> {
-            authorRepository.delete(addedAuthor);
+            authorRepository.remove(addedAuthor);
             return null;
         });
         Assert.assertThat(authorRepository.findBy(addedAuthorId), is(nullValue()));
@@ -92,7 +80,7 @@ public class AuthorRepositoryTest {
     @Test
     public void existsById() {
         final Long addedAuthorId = dbCommandTransactionalExecutor.execute(() -> authorRepository.add(AuthorFactory.createMartinFowler()).getId());
-        Assert.assertThat(authorRepository.existsBy(addedAuthorId), is(true));
+        Assert.assertThat(authorRepository.existsById(addedAuthorId), is(true));
     }
 
     @Test
