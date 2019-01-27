@@ -5,14 +5,12 @@ import com.library.app.category.repository.CategoryRepository;
 import com.library.app.common.exception.CategoryNotFound;
 import com.library.app.common.exception.DuplicatedCategoryException;
 import com.library.app.common.exception.FieldNotValidException;
+import com.library.app.common.utils.ValidationUtils;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 @Stateless
 public class CategoryService implements ICategoryService {
@@ -55,20 +53,10 @@ public class CategoryService implements ICategoryService {
     }
 
     private void validateCategory(Category category) {
-        validateFields(category);
+        ValidationUtils.validateFields(category, validator);
 
         if (categoryRepository.alreadyExists(category)) {
             throw new DuplicatedCategoryException();
-        }
-    }
-
-    private void validateFields(Category category) {
-        final Set<ConstraintViolation<Category>> errors = validator.validate(category);
-        final Iterator<ConstraintViolation<Category>> itErrors = errors.iterator();
-
-        if (itErrors.hasNext()) {
-            ConstraintViolation<Category> violation = itErrors.next();
-            throw new FieldNotValidException(violation.getPropertyPath().toString(), violation.getMessage());
         }
     }
 }

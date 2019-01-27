@@ -4,6 +4,12 @@ import com.library.app.author.model.Author;
 
 public class AuthorFactory {
 
+
+    public static Author createWithId(final Long id, final Author author) {
+        author.setId(id);
+        return author;
+    }
+
     public static Author createRobertMartin() {
         return new Author("Robert Martin");
     }
