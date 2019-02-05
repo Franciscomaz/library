@@ -137,7 +137,7 @@ public class AuthorServiceTest {
         final PaginatedData<Author> authors = new PaginatedData<>(1, Collections.singletonList(createWithId(1L, createMartinFowler())));
         when(authorRepository.findByFilter(anyObject())).thenReturn(authors);
 
-        final PaginatedData<Author> authorsReturned = authorService.findByFilter(new AuthorFilter());
+        final PaginatedData<Author> authorsReturned = authorService.findBy(new AuthorFilter());
         Assert.assertThat(authorsReturned.getNumberOfRows(), is(1));
         Assert.assertThat(authorsReturned.getRow(0).getName(), is(createMartinFowler().getName()));
     }

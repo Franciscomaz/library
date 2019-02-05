@@ -10,10 +10,7 @@ import com.library.app.common.exception.FieldNotValidException;
 import com.library.app.common.json.JsonUtils;
 import com.library.app.common.json.JsonWriter;
 import com.library.app.common.json.OperationResultJsonWriter;
-import com.library.app.common.model.HttpCode;
-import com.library.app.common.model.OperationResult;
-import com.library.app.common.model.ResourceMessage;
-import com.library.app.common.model.StandardsOperationResults;
+import com.library.app.common.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,23 +131,12 @@ public class CategoryResource {
 
         logger.debug("Found {} categories", categories);
 
-        final JsonElement jsonWithPagingElements = getJsonElementWithPagingEntries(categories);
+        final JsonElement jsonWithPagingElements = JsonUtils
+                .getJsonElementWithPagingEntries(new PaginatedData<>(categories.size(), categories), categoryJsonConverter);
 
         return Response
                 .status(HttpCode.OK.getCode())
                 .entity(JsonWriter.writeToString(jsonWithPagingElements))
                 .build();
-    }
-
-    private JsonElement getJsonElementWithPagingEntries(List<Category> categories) {
-        JsonObject jsonWithEntriesAndPaging = new JsonObject();
-
-        JsonObject jsonPaging = new JsonObject();
-        jsonPaging.addProperty("totalRecords", categories.size());
-
-        jsonWithEntriesAndPaging.add("paging", jsonPaging);
-        jsonWithEntriesAndPaging.add("entries", categoryJsonConverter.convertToJsonElement(categories));
-
-        return jsonWithEntriesAndPaging;
     }
 }

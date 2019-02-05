@@ -12,6 +12,6 @@ public interface IAuthorService {
     Author add(Author author) throws FieldNotValidException;
     Author update(Author author) throws FieldNotValidException, AuthorNotFound;
     Author findBy(Long id) throws AuthorNotFound;
-    PaginatedData<Author> findByFilter(AuthorFilter filter);
+    PaginatedData<Author> findBy(AuthorFilter filter);
     List<Author> findAll();
 }

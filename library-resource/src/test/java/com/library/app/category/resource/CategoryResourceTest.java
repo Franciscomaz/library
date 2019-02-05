@@ -8,24 +8,18 @@ import com.library.app.common.exception.FieldNotValidException;
 import com.library.app.common.model.HttpCode;
 import com.library.app.commontests.utils.ResourceDefinitions;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 import java.util.Collections;
 
-import static com.library.app.common.utils.category.CategoryFactory.createAction;
-import static com.library.app.common.utils.category.CategoryFactory.createFiction;
-import static com.library.app.common.utils.category.CategoryFactory.createWithId;
+import static com.library.app.common.utils.category.CategoryFactory.*;
 import static com.library.app.commontests.utils.FileTestNameUtils.getFileRequestPath;
 import static com.library.app.commontests.utils.FileTestNameUtils.getFileResponsePath;
-import static com.library.app.commontests.utils.JsonTestUtils.assertJsonMatchesFileContent;
-import static com.library.app.commontests.utils.JsonTestUtils.assertMatchesExpectedJson;
-import static com.library.app.commontests.utils.JsonTestUtils.readJsonFile;
+import static com.library.app.commontests.utils.JsonTestUtils.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
@@ -130,7 +124,6 @@ public class CategoryResourceTest {
     }
 
     @Test
-    @Ignore
     public void shouldFindAllCategories() {
         when(categoryService.findAll()).thenReturn(Arrays.asList(createWithId(createFiction(), 1L), createWithId(createAction(), 2L)));
 
@@ -140,7 +133,6 @@ public class CategoryResourceTest {
     }
 
     @Test
-    @Ignore
     public void shouldNotFindAnyCategory() {
         when(categoryService.findAll()).thenReturn(Collections.emptyList());
 

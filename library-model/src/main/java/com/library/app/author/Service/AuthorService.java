@@ -48,7 +48,7 @@ public class AuthorService implements IAuthorService {
     }
 
     @Override
-    public PaginatedData<Author> findByFilter(AuthorFilter filter) {
+    public PaginatedData<Author> findBy(AuthorFilter filter) {
         return authorRepository.findByFilter(filter);
     }
 
